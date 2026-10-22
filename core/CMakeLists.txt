@@ -25,8 +25,13 @@ set(CMAKE_VISIBILITY_INLINES_HIDDEN TRUE)
 set(PROJECT_INCLUDE ${CMAKE_CURRENT_SOURCE_DIR}/include/moveit/task_constructor)
 
 add_subdirectory(src)
-ament_python_install_package(moveit PACKAGE_DIR python/moveit)
-add_subdirectory(python)
+# The bundled pybind11 submodule clashes with a system pybind11 reachable through
+# shared include dirs (e.g. Homebrew's /opt/homebrew/include on macOS).
+option(MTC_BUILD_PYTHON "Build the MTC Python bindings" ON)
+if(MTC_BUILD_PYTHON)
+	ament_python_install_package(moveit PACKAGE_DIR python/moveit)
+	add_subdirectory(python)
+endif()
 add_subdirectory(test)
 
 install(DIRECTORY include/ DESTINATION include
